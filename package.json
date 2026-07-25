@@ -1,19 +1,29 @@
 {
-  "name": "progress-dot",
-  "description": "Show a progress dot in the status bar",
-  "repository": "https://github.com/asiloisad/pulsar-progress-dot",
+  "name": "busy-signal",
+  "author": "lumine-code",
+  "description": "Show a busy signal in the status bar",
+  "repository": "https://github.com/lumine-code/busy-signal",
+  "bugs": {
+    "url": "https://github.com/lumine-code/busy-signal/issues"
+  },
   "keywords": [
     "busy",
     "signal",
     "status-bar",
     "indicator"
   ],
-  "version": "1.0.3",
+  "version": "2.0.0",
   "license": "MIT",
   "engines": {
     "atom": ">=1.100.0 <2.0.0"
   },
   "main": "./lib/index",
+  "scripts": {
+    "test": "cd ../lumine && npm run test:only -- ../busy-signal/spec",
+    "lint": "eslint . --max-warnings 0",
+    "format": "prettier --write .",
+    "format:check": "prettier --check ."
+  },
   "consumedServices": {
     "status-bar": {
       "versions": {
@@ -31,6 +41,22 @@
       "versions": {
         "0.1.0": "provideBusySignal"
       }
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.8.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-n": "^18.2.2",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.6"
+  },
+  "configSchema": {
+    "debug": {
+      "title": "Debug",
+      "description": "Log busy-signal diagnostic messages to the developer console.",
+      "type": "boolean",
+      "default": false
     }
   }
 }
