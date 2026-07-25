@@ -7,10 +7,11 @@
     "url": "https://github.com/lumine-code/busy-signal/issues"
   },
   "keywords": [
-    "busy",
-    "signal",
     "status-bar",
-    "indicator"
+    "indicator",
+    "progress",
+    "loading",
+    "spinner"
   ],
   "version": "1.0.0",
   "license": "MIT",
