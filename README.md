@@ -28,7 +28,7 @@ In your `package.json`:
   "consumedServices": {
     "atom-ide-busy-signal": {
       "versions": {
-        "0.1.0": "consumeBusySignal"
+        "^1.0.0": "consumeBusySignal"
       }
     }
   }
@@ -78,7 +78,7 @@ In your `package.json`:
   "consumedServices": {
     "busy-signal": {
       "versions": {
-        "1.0.0": "consumeSignal"
+        "^1.0.0": "consumeSignal"
       }
     }
   }
@@ -129,7 +129,7 @@ The style can be adjusted according to user preferences in the `styles.less` fil
 ## Services
 
 - **busy-signal** (`1.0.0`): provided to let other packages show busy messages through a low-level provider registry with `add`/`remove`/`clear` control.
-- **atom-ide-busy-signal** (`0.1.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
+- **atom-ide-busy-signal** (`1.0.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
 - **status-bar** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
 
 ## Contributing
