@@ -1,6 +1,8 @@
 # busy-signal
 
-Show a busy signal in the status bar. A base package that provides an easy-to-use API for other packages to signal they are performing a task.
+Show a busy signal in the status bar.
+
+A base package that provides an easy-to-use API for other packages to signal they are performing a task.
 
 ## Features
 
