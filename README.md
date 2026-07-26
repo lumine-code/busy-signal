@@ -9,7 +9,9 @@ A base package that provides an easy-to-use API for other packages to signal the
 - **Animated dot indicator**: a colored dot in the status bar pulses orange while busy and turns green when idle.
 - **Minimum display duration**: the busy state is shown for at least 1 second to avoid flickering on fast operations.
 - **Hover tooltip**: shows the currently running tasks and a history of recently completed ones with their durations.
-- **Two service APIs**: provides both `atom-ide-busy-signal` (recommended, async-friendly) and `busy-signal` (lower-level, multi-message) service contracts.
+- **Background zone**: a separate, animation-free zone counts long-running processes such as language servers, marks the failed ones, and stays hidden while there are none.
+- **Background list**: clicking the background zone opens a filterable list of the live processes with their details and statuses.
+- **Three service APIs**: provides `atom-ide-busy-signal` (recommended, async-friendly), `busy-signal` (lower-level, multi-message), and `busy-signal.background` (long-running processes) service contracts.
 
 ## Installation
 
@@ -17,7 +19,7 @@ To install `busy-signal` search for _busy-signal_ in the Install pane of the Lum
 
 ## Usage
 
-Two service APIs are available. Use `atom-ide-busy-signal` for new packages: async lifecycle is handled automatically and each message is independently disposable. Use `busy-signal` when you need multiple concurrent messages from a single provider or fine-grained `add`/`remove`/`clear` control, or for compatibility with older packages.
+Three service APIs are available. Use `atom-ide-busy-signal` for new packages: async lifecycle is handled automatically and each message is independently disposable. Use `busy-signal` when you need multiple concurrent messages from a single provider or fine-grained `add`/`remove`/`clear` control, or for compatibility with older packages. Use `busy-signal.background` for processes that stay alive for the whole session, such as one language server per project root: they are shown in their own zone and never spin the busy dot.
 
 ### The `atom-ide-busy-signal` service
 
@@ -118,19 +120,91 @@ Provider methods:
 | `clear()`       | Remove all messages from this provider       |
 | `dispose()`     | Remove all messages and dispose the provider |
 
+### The `busy-signal.background` service
+
+API for processes that are alive for a long time and belong in the background zone instead of the busy dot.
+
+In your `package.json`:
+
+```json
+{
+  "consumedServices": {
+    "busy-signal.background": {
+      "versions": {
+        "^1.0.0": "consumeBackgroundSignal"
+      }
+    }
+  }
+}
+```
+
+In your main module:
+
+```javascript
+const { CompositeDisposable } = require("atom");
+
+module.exports = {
+  activate() {
+    this.subscriptions = new CompositeDisposable();
+  },
+  consumeBackgroundSignal(registry) {
+    const background = registry.create();
+    this.subscriptions.add(background);
+    background.set("ide-client:pyright:/home/me/proj", {
+      title: "Pyright",
+      detail: "/home/me/proj",
+      status: "starting",
+    });
+    // ... the same id updates the entry in place:
+    background.set("ide-client:pyright:/home/me/proj", {
+      title: "Pyright",
+      detail: "/home/me/proj",
+      status: "running",
+    });
+    // ... later:
+    background.remove("ide-client:pyright:/home/me/proj");
+  },
+  deactivate() {
+    this.subscriptions.dispose();
+  },
+};
+```
+
+Provider methods:
+
+| Method           | Description                                       |
+| ---------------- | ------------------------------------------------- |
+| `set(id, entry)` | Add the entry, or update the one with the same id |
+| `remove(id)`     | Remove the entry with the given id                |
+| `clear()`        | Remove all entries of this provider               |
+| `dispose()`      | Remove all entries and dispose the provider       |
+
+Entry fields:
+
+| Field    | Description                                                              |
+| -------- | ------------------------------------------------------------------------ |
+| `title`  | Short label shown in the zone, defaults to the id                        |
+| `detail` | Optional secondary text, such as the project root                        |
+| `status` | One of `starting`, `running`, `failed`, `stopped`, defaults to `running` |
+
 ## Customization
 
-The style can be adjusted according to user preferences in the `styles.less` file, e.g. change the dot color while busy:
+The style can be adjusted according to user preferences in the `styles.less` file, e.g. change the dot color while busy and the background zone color:
 
 ```less
 .busy-signal.busy::before {
   background-color: var(--text-color-error);
+}
+
+.busy-signal-background {
+  color: var(--text-color-info);
 }
 ```
 
 ## Services
 
 - **busy-signal** (`1.0.0`): provided to let other packages show busy messages through a low-level provider registry with `add`/`remove`/`clear` control.
+- **busy-signal.background** (`1.0.0`): provided to let other packages register long-running background processes through a provider registry with `set`/`remove`/`clear` control.
 - **atom-ide-busy-signal** (`1.0.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
 - **status-bar** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
 
