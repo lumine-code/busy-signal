@@ -1,3 +1,18 @@
+describe("busy-signal services", () => {
+  it("provides no service name that nests under another one", () => {
+    const { providedServices } = require("../package.json");
+    // The service hub stores a service named "x.y" at the key path ["x"]["y"],
+    // so it is also handed to consumers asking for "x". Providing both names
+    // gives those consumers the wrong value depending on registration order.
+    const names = Object.keys(providedServices);
+    for (const name of names) {
+      const parent = name.split(".")[0];
+      if (parent === name) continue;
+      expect(names).not.toContain(parent);
+    }
+  });
+});
+
 describe("busy-signal", () => {
   let workspaceElement, container, mainModule, element, backgroundElement;
 
@@ -168,7 +183,7 @@ describe("busy-signal", () => {
     });
   });
 
-  describe("busy-signal.background service", () => {
+  describe("background-signal service", () => {
     const PYRIGHT = "ide-client:pyright:/home/me/proj";
     let registry, background;
 

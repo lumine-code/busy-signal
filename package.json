@@ -39,7 +39,7 @@
         "1.0.0": "providerRegistry"
       }
     },
-    "busy-signal.background": {
+    "background-signal": {
       "versions": {
         "1.0.0": "provideBackgroundSignal"
       }
