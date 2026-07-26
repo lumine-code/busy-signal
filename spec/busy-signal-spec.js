@@ -77,7 +77,7 @@ describe("busy-signal", () => {
     let registry;
 
     beforeEach(() => {
-      registry = mainModule.providerRegistry();
+      registry = mainModule.provideBusySignalRegistry();
     });
 
     it("provides the provider registry", () => {
@@ -136,11 +136,11 @@ describe("busy-signal", () => {
     });
   });
 
-  describe("atom-ide-busy-signal service", () => {
+  describe("busy-signal.reporter service", () => {
     let api;
 
     beforeEach(() => {
-      api = mainModule.provideBusySignal();
+      api = mainModule.provideBusySignalReporter();
     });
 
     it("provides the reportBusy and reportBusyWhile API", () => {
@@ -188,7 +188,7 @@ describe("busy-signal", () => {
     let registry, background;
 
     beforeEach(() => {
-      registry = mainModule.provideBackgroundSignal();
+      registry = mainModule.provideBusySignalBackgroundRegistry();
       background = registry.create();
     });
 
@@ -323,7 +323,7 @@ describe("busy-signal", () => {
     let background;
 
     beforeEach(() => {
-      background = mainModule.provideBackgroundSignal().create();
+      background = mainModule.provideBusySignalBackgroundRegistry().create();
       background.set("ide-client:pyright:/home/me/proj", {
         title: "Pyright",
         detail: "/home/me/proj",

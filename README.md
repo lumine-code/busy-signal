@@ -11,7 +11,7 @@ A base package that provides an easy-to-use API for other packages to signal the
 - **Hover tooltip**: shows the currently running tasks and a history of recently completed ones with their durations.
 - **Background zone**: a separate, animation-free zone counts long-running processes such as language servers, marks the failed ones, and stays hidden while there are none.
 - **Background list**: clicking the background zone opens a filterable list of the live processes with their details and statuses.
-- **Three service APIs**: provides `atom-ide-busy-signal` (recommended, async-friendly), `busy-signal` (lower-level, multi-message), and `background-signal` (long-running processes) service contracts.
+- **Three service APIs**: provides `busy-signal.reporter` (recommended, async-friendly), `busy-signal.registry` (lower-level, multi-message), and `busy-signal.background-registry` (long-running processes) service contracts.
 
 ## Installation
 
@@ -19,9 +19,9 @@ To install `busy-signal` search for _busy-signal_ in the Install pane of the Lum
 
 ## Usage
 
-Three service APIs are available. Use `atom-ide-busy-signal` for new packages: async lifecycle is handled automatically and each message is independently disposable. Use `busy-signal` when you need multiple concurrent messages from a single provider or fine-grained `add`/`remove`/`clear` control, or for compatibility with older packages. Use `background-signal` for processes that stay alive for the whole session, such as one language server per project root: they are shown in their own zone and never spin the busy dot.
+Three service APIs are available. Use `busy-signal.reporter` for new packages: async lifecycle is handled automatically and each message is independently disposable. Use `busy-signal.registry` when you need multiple concurrent messages from a single provider or fine-grained `add`/`remove`/`clear` control, or for compatibility with older packages. Use `busy-signal.background-registry` for processes that stay alive for the whole session, such as one language server per project root: they are shown in their own zone and never spin the busy dot.
 
-### The `atom-ide-busy-signal` service
+### The `busy-signal.reporter` service
 
 High-level API that manages busy messages tied to async operations.
 
@@ -30,9 +30,9 @@ In your `package.json`:
 ```json
 {
   "consumedServices": {
-    "atom-ide-busy-signal": {
+    "busy-signal.reporter": {
       "versions": {
-        "^1.0.0": "consumeBusySignal"
+        "^1.0.0": "consumeBusySignalReporter"
       }
     }
   }
@@ -43,7 +43,7 @@ In your main module:
 
 ```javascript
 module.exports = {
-  async consumeBusySignal(api) {
+  async consumeBusySignalReporter(api) {
     // Automatically shown while the promise is pending:
     const result = await api.reportBusyWhile("Downloading data...", () => fetch("https://..."));
 
@@ -71,7 +71,7 @@ BusyMessage methods:
 | `setTitle(title)` | Update the message text |
 | `dispose()`       | Remove the message      |
 
-### The `busy-signal` service
+### The `busy-signal.registry` service
 
 Low-level API that allows adding and removing busy messages via a `Provider` instance.
 
@@ -80,9 +80,9 @@ In your `package.json`:
 ```json
 {
   "consumedServices": {
-    "busy-signal": {
+    "busy-signal.registry": {
       "versions": {
-        "^1.0.0": "consumeSignal"
+        "^1.0.0": "consumeBusySignalRegistry"
       }
     }
   }
@@ -98,7 +98,7 @@ module.exports = {
   activate() {
     this.subscriptions = new CompositeDisposable();
   },
-  consumeSignal(registry) {
+  consumeBusySignalRegistry(registry) {
     const provider = registry.create();
     this.subscriptions.add(provider);
     provider.add("Building project");
@@ -120,7 +120,7 @@ Provider methods:
 | `clear()`       | Remove all messages from this provider       |
 | `dispose()`     | Remove all messages and dispose the provider |
 
-### The `background-signal` service
+### The `busy-signal.background-registry` service
 
 API for processes that are alive for a long time and belong in the background zone instead of the busy dot.
 
@@ -129,9 +129,9 @@ In your `package.json`:
 ```json
 {
   "consumedServices": {
-    "background-signal": {
+    "busy-signal.background-registry": {
       "versions": {
-        "^1.0.0": "consumeBackgroundSignal"
+        "^1.0.0": "consumeBusySignalBackgroundRegistry"
       }
     }
   }
@@ -147,7 +147,7 @@ module.exports = {
   activate() {
     this.subscriptions = new CompositeDisposable();
   },
-  consumeBackgroundSignal(registry) {
+  consumeBusySignalBackgroundRegistry(registry) {
     const background = registry.create();
     this.subscriptions.add(background);
     background.set("ide-client:pyright:/home/me/proj", {
@@ -203,9 +203,9 @@ The style can be adjusted according to user preferences in the `styles.less` fil
 
 ## Services
 
-- **busy-signal** (`1.0.0`): provided to let other packages show busy messages through a low-level provider registry with `add`/`remove`/`clear` control.
-- **background-signal** (`1.0.0`): provided to let other packages register long-running background processes through a provider registry with `set`/`remove`/`clear` control.
-- **atom-ide-busy-signal** (`1.0.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
+- **busy-signal.registry** (`1.0.0`): provided to let other packages show busy messages through a low-level provider registry with `add`/`remove`/`clear` control.
+- **busy-signal.background-registry** (`1.0.0`): provided to let other packages register long-running background processes through a provider registry with `set`/`remove`/`clear` control.
+- **busy-signal.reporter** (`1.0.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
 - **status-bar** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
 
 ## Contributing

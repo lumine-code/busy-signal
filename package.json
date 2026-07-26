@@ -34,19 +34,19 @@
     }
   },
   "providedServices": {
-    "busy-signal": {
+    "busy-signal.registry": {
       "versions": {
-        "1.0.0": "providerRegistry"
+        "1.0.0": "provideBusySignalRegistry"
       }
     },
-    "background-signal": {
+    "busy-signal.background-registry": {
       "versions": {
-        "1.0.0": "provideBackgroundSignal"
+        "1.0.0": "provideBusySignalBackgroundRegistry"
       }
     },
-    "atom-ide-busy-signal": {
+    "busy-signal.reporter": {
       "versions": {
-        "1.0.0": "provideBusySignal"
+        "1.0.0": "provideBusySignalReporter"
       }
     }
   },
