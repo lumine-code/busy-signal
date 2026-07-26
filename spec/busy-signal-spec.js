@@ -183,7 +183,7 @@ describe("busy-signal", () => {
     });
   });
 
-  describe("background-signal service", () => {
+  describe("busy-signal.background-registry service", () => {
     const PYRIGHT = "ide-client:pyright:/home/me/proj";
     let registry, background;
 
