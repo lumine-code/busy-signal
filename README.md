@@ -203,10 +203,10 @@ The style can be adjusted according to user preferences in the `styles.less` fil
 
 ## Services
 
-- **busy-signal.registry** (`1.0.0`): provided to let other packages show busy messages through a low-level provider registry with `add`/`remove`/`clear` control.
-- **busy-signal.background-registry** (`1.0.0`): provided to let other packages register long-running background processes through a provider registry with `set`/`remove`/`clear` control.
-- **busy-signal.reporter** (`1.0.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
-- **status-bar** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
+- **[busy-signal.registry](docs/busy-signal.registry.md)** (`1.0.0`): provided to let other packages show busy messages through a low-level provider registry with `add`/`remove`/`clear` control.
+- **[busy-signal.background-registry](docs/busy-signal.background-registry.md)** (`1.0.0`): provided to let other packages register long-running background processes through a provider registry with `set`/`remove`/`clear` control.
+- **[busy-signal.reporter](docs/busy-signal.reporter.md)** (`1.0.0`): provided to let other packages report busy states with an async-friendly `reportBusy`/`reportBusyWhile` API.
+- **[status-bar](https://lumine-code.github.io/docs.html#services/status-bar)** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
 
 ## Contributing
 
