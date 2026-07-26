@@ -34,19 +34,9 @@
     }
   },
   "providedServices": {
-    "busy-signal.registry": {
+    "busy-signal": {
       "versions": {
-        "1.0.0": "provideBusySignalRegistry"
-      }
-    },
-    "busy-signal.background-registry": {
-      "versions": {
-        "1.0.0": "provideBusySignalBackgroundRegistry"
-      }
-    },
-    "busy-signal.reporter": {
-      "versions": {
-        "1.0.0": "provideBusySignalReporter"
+        "1.0.0": "provideBusySignal"
       }
     }
   },

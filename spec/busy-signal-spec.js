@@ -1,14 +1,22 @@
 describe("busy-signal services", () => {
-  it("provides no service name that nests under another one", () => {
+  it("provides exactly one service, named after the package", () => {
     const { providedServices } = require("../package.json");
-    // The service hub stores a service named "x.y" at the key path ["x"]["y"],
-    // so it is also handed to consumers asking for "x". Providing both names
-    // gives those consumers the wrong value depending on registration order.
-    const names = Object.keys(providedServices);
-    for (const name of names) {
-      const parent = name.split(".")[0];
-      if (parent === name) continue;
-      expect(names).not.toContain(parent);
+    expect(Object.keys(providedServices)).toEqual(["busy-signal"]);
+    expect(providedServices["busy-signal"].versions["1.0.0"]).toBe("provideBusySignal");
+  });
+
+  it("no longer provides the split or atom-ide names", () => {
+    const { providedServices } = require("../package.json");
+    // The two zones are one service; the registries behind them are an
+    // implementation detail, and the reporter facade is gone entirely.
+    for (const gone of [
+      "busy-signal.registry",
+      "busy-signal.background-registry",
+      "busy-signal.reporter",
+      "background-signal",
+      "atom-ide-busy-signal",
+    ]) {
+      expect(providedServices[gone]).toBeUndefined();
     }
   });
 });
@@ -77,12 +85,15 @@ describe("busy-signal", () => {
     let registry;
 
     beforeEach(() => {
-      registry = mainModule.provideBusySignalRegistry();
+      registry = mainModule.provideBusySignal();
     });
 
-    it("provides the provider registry", () => {
-      expect(registry).toBe(mainModule.instance.registry);
+    it("mints transient providers off the registry", () => {
       expect(typeof registry.create).toBe("function");
+      expect(typeof registry.createBackground).toBe("function");
+      expect(mainModule.instance.registry.providers.size).toBe(0);
+      const provider = registry.create();
+      expect(mainModule.instance.registry.providers.has(provider)).toBe(true);
     });
 
     it("reflects added and removed busy states in the status bar", () => {
@@ -136,65 +147,18 @@ describe("busy-signal", () => {
     });
   });
 
-  describe("busy-signal.reporter service", () => {
-    let api;
-
-    beforeEach(() => {
-      api = mainModule.provideBusySignalReporter();
-    });
-
-    it("provides the reportBusy and reportBusyWhile API", () => {
-      expect(typeof api.reportBusy).toBe("function");
-      expect(typeof api.reportBusyWhile).toBe("function");
-      expect(typeof api.dispose).toBe("function");
-    });
-
-    it("shows a busy message until the handle is disposed", () => {
-      const message = api.reportBusy("Formatting...");
-      expect(element.classList.contains("busy")).toBe(true);
-      expect(element.tooltipContent.textContent).toContain("Formatting...");
-
-      message.setTitle("Writing to disk...");
-      expect(element.tooltipContent.textContent).toContain("Writing to disk...");
-      expect(element.tooltipContent.textContent).not.toContain("Formatting...");
-
-      message.dispose();
-      advanceClock(2000);
-      expect(element.classList.contains("idle")).toBe(true);
-    });
-
-    it("shows a busy message for the duration of an async function", async () => {
-      let resolvePromise;
-      const promise = new Promise((resolve) => {
-        resolvePromise = resolve;
-      });
-
-      const pending = api.reportBusyWhile("Downloading...", () => promise);
-      expect(element.classList.contains("busy")).toBe(true);
-      expect(element.tooltipContent.textContent).toContain("Downloading...");
-
-      resolvePromise(42);
-      const result = await pending;
-      expect(result).toBe(42);
-
-      advanceClock(2000);
-      expect(element.classList.contains("idle")).toBe(true);
-      expect(element.tooltipContent.textContent).toContain("History:");
-    });
-  });
-
-  describe("busy-signal.background-registry service", () => {
+  describe("the background provider", () => {
     const PYRIGHT = "ide-client:pyright:/home/me/proj";
-    let registry, background;
+    let registry, background, backgroundRegistry;
 
     beforeEach(() => {
-      registry = mainModule.provideBusySignalBackgroundRegistry();
-      background = registry.create();
+      registry = mainModule.provideBusySignal();
+      backgroundRegistry = mainModule.instance.backgroundRegistry;
+      background = registry.createBackground();
     });
 
     it("provides the background provider registry", () => {
-      expect(registry).toBe(mainModule.instance.backgroundRegistry);
-      expect(typeof registry.create).toBe("function");
+      expect(typeof registry.createBackground).toBe("function");
       expect(typeof background.set).toBe("function");
       expect(typeof background.remove).toBe("function");
       expect(typeof background.clear).toBe("function");
@@ -226,7 +190,7 @@ describe("busy-signal", () => {
 
       expect(backgroundElement.count.textContent).toBe("1");
       expect(backgroundElement.tooltipContent.textContent).toContain(`${PYRIGHT} (running)`);
-      expect(registry.getEntries()).toEqual([
+      expect(backgroundRegistry.getEntries()).toEqual([
         { id: PYRIGHT, title: PYRIGHT, detail: null, status: "running" },
       ]);
     });
@@ -234,14 +198,14 @@ describe("busy-signal", () => {
     it("falls back to the running status for an unknown one", () => {
       background.set(PYRIGHT, { title: "Pyright", status: "bogus" });
 
-      expect(registry.getEntries()[0].status).toBe("running");
+      expect(backgroundRegistry.getEntries()[0].status).toBe("running");
     });
 
     it("ignores an entry without a usable id", () => {
       background.set("", { title: "Nameless" });
       background.set(null, { title: "Nameless" });
 
-      expect(registry.getEntries().length).toBe(0);
+      expect(backgroundRegistry.getEntries().length).toBe(0);
       expect(backgroundElement.hidden).toBe(true);
     });
 
@@ -250,7 +214,7 @@ describe("busy-signal", () => {
       expect(backgroundElement.classList.contains("has-starting")).toBe(true);
 
       background.set(PYRIGHT, { title: "Pyright", status: "running" });
-      expect(registry.getEntries().length).toBe(1);
+      expect(backgroundRegistry.getEntries().length).toBe(1);
       expect(backgroundElement.count.textContent).toBe("1");
       expect(backgroundElement.classList.contains("has-starting")).toBe(false);
       expect(backgroundElement.tooltipContent.textContent).toContain("Pyright (running)");
@@ -275,11 +239,11 @@ describe("busy-signal", () => {
       background.set("b", { title: "B", status: "starting" });
       background.set("a", { title: "A", status: "running" });
 
-      expect(registry.getEntries().map((entry) => entry.title)).toEqual(["A", "B"]);
+      expect(backgroundRegistry.getEntries().map((entry) => entry.title)).toEqual(["A", "B"]);
     });
 
     it("pools the entries of every provider", () => {
-      const other = registry.create();
+      const other = registry.createBackground();
       background.set(PYRIGHT, { title: "Pyright" });
       other.set(PYRIGHT, { title: "Pyright in another window root" });
 
@@ -296,18 +260,18 @@ describe("busy-signal", () => {
 
       background.remove(PYRIGHT);
       expect(backgroundElement.hidden).toBe(true);
-      expect(registry.getEntries().length).toBe(0);
+      expect(backgroundRegistry.getEntries().length).toBe(0);
     });
 
     it("clears all entries of a provider", () => {
-      const other = registry.create();
+      const other = registry.createBackground();
       background.set("a", { title: "A" });
       background.set("b", { title: "B" });
       other.set("c", { title: "C" });
 
       background.clear();
       expect(backgroundElement.hidden).toBe(false);
-      expect(registry.getEntries().map((entry) => entry.title)).toEqual(["C"]);
+      expect(backgroundRegistry.getEntries().map((entry) => entry.title)).toEqual(["C"]);
     });
 
     it("removes the entries of a disposed provider", () => {
@@ -315,7 +279,7 @@ describe("busy-signal", () => {
       background.dispose();
 
       expect(backgroundElement.hidden).toBe(true);
-      expect(registry.getEntries().length).toBe(0);
+      expect(backgroundRegistry.getEntries().length).toBe(0);
     });
   });
 
@@ -323,7 +287,7 @@ describe("busy-signal", () => {
     let background;
 
     beforeEach(() => {
-      background = mainModule.provideBusySignalBackgroundRegistry().create();
+      background = mainModule.provideBusySignal().createBackground();
       background.set("ide-client:pyright:/home/me/proj", {
         title: "Pyright",
         detail: "/home/me/proj",
