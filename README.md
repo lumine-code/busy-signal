@@ -53,7 +53,7 @@ The style can be adjusted according to user preferences in the `styles.less` fil
 ## Services
 
 - **[busy-signal](docs/busy-signal.md)** (`1.0.0`): provided to let other packages report work in progress on the busy indicator.
-- **[status-bar](https://lumine-code.github.io/docs.html#services/status-bar)** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
+- **status-bar** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
 
 ## Contributing
 
