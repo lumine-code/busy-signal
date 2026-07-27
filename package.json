@@ -10,11 +10,10 @@
     "status-bar",
     "indicator",
     "progress",
-    "background",
     "loading",
     "spinner"
   ],
-  "version": "1.0.0",
+  "version": "2.0.0",
   "license": "MIT",
   "engines": {
     "atom": ">=1.100.0 <2.0.0"
@@ -40,9 +39,6 @@
       }
     }
   },
-  "dependencies": {
-    "@lumine-code/select-list": "https://github.com/lumine-code/select-list.git#a201dae6a0ea6954cb9a905be4a718af697d9f78"
-  },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "eslint": "^10.8.0",
@@ -52,12 +48,6 @@
     "prettier": "^3.9.6"
   },
   "configSchema": {
-    "showBackground": {
-      "title": "Show Background Zone",
-      "description": "Show the zone listing long-running background processes next to the busy signal.",
-      "type": "boolean",
-      "default": true
-    },
     "debug": {
       "title": "Debug",
       "description": "Log busy-signal diagnostic messages to the developer console.",
