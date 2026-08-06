@@ -42,9 +42,9 @@ The full contract — the cardinality rule and the `changeTitle` argument order 
 
 ## Customization
 
-The style can be adjusted according to user preferences in the `styles.less` file, e.g. change the dot color while busy:
+The style can be adjusted according to user preferences in the `styles.css` file, e.g. change the dot color while busy:
 
-```less
+```css
 .busy-signal.busy::before {
   background-color: var(--text-color-error);
 }
