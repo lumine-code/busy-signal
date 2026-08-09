@@ -25,10 +25,10 @@ describe("busy-signal", () => {
   let workspaceElement, container, mainModule, element;
 
   beforeEach(async () => {
-    workspaceElement = atom.views.getView(atom.workspace);
+    workspaceElement = lumine.views.getView(lumine.workspace);
     jasmine.attachToDOM(workspaceElement);
 
-    const pack = await atom.packages.activatePackage("busy-signal");
+    const pack = await lumine.packages.activatePackage("busy-signal");
     mainModule = pack.mainModule;
 
     container = document.createElement("div");
@@ -51,7 +51,7 @@ describe("busy-signal", () => {
 
   describe("activation", () => {
     it("activates and attaches the signal element to the status bar", () => {
-      expect(atom.packages.isPackageActive("busy-signal")).toBe(true);
+      expect(lumine.packages.isPackageActive("busy-signal")).toBe(true);
       expect(container.contains(element)).toBe(true);
       expect(element.tagName.toLowerCase()).toBe("busy-signal");
       // The element is the tile item itself, not wrapped: it carries the
@@ -64,7 +64,7 @@ describe("busy-signal", () => {
     });
 
     it("removes the status-bar tile on deactivation", async () => {
-      await atom.packages.deactivatePackage("busy-signal");
+      await lumine.packages.deactivatePackage("busy-signal");
       expect(container.contains(element)).toBe(false);
     });
   });
