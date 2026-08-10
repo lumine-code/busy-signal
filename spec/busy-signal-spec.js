@@ -54,11 +54,12 @@ describe("busy-signal", () => {
       expect(lumine.packages.isPackageActive("busy-signal")).toBe(true);
       expect(container.contains(element)).toBe(true);
       expect(element.tagName.toLowerCase()).toBe("busy-signal");
-      // The element is the tile item itself, not wrapped, so the bar stamps
-      // its tile class straight onto it.
+      // The element is the tile item itself, not wrapped. It carries no
+      // status-bar class of its own: the bar stamps `.status-bar-item` on
+      // whatever it is handed, and the stub above stands in for the bar.
       expect(element.parentElement).toBe(container);
       expect(element.classList.contains("busy-signal")).toBe(true);
-      expect(element.classList.contains("status-bar-item")).toBe(true);
+      expect(element.classList.contains("inline-block")).toBe(false);
       expect(element.classList.contains("idle")).toBe(true);
       expect(element.tooltipContent.textContent).toBe("Idle");
     });
