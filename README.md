@@ -13,12 +13,11 @@ A base package that provides an easy-to-use API for other packages to signal the
 
 ## Installation
 
-To install `busy-signal` search for _busy-signal_ in the Install pane of the Lumine settings or run `lumine --install lumine-code/busy-signal`.
+To install `busy-signal` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/busy-signal`.
 
 ## Usage
 
-Other packages report their work through the `busy-signal` service. `create()` hands out a provider
-for work that starts and finishes; the busy dot spins while any provider has a live message.
+Other packages report their work through the `busy-signal` service. `create()` hands out a provider for work that starts and finishes; the busy dot spins while any provider has a live message.
 
 ```js
 consumeBusySignal(busySignal) {
@@ -37,8 +36,7 @@ async scan(root) {
 }
 ```
 
-The full contract — the cardinality rule and the `changeTitle` argument order — is in
-[docs/busy-signal.md](docs/busy-signal.md).
+The full contract — the cardinality rule and the `changeTitle` argument order — is in [docs/busy-signal.md](docs/busy-signal.md).
 
 ## Customization
 
@@ -52,8 +50,8 @@ The style can be adjusted according to user preferences in the `styles.css` file
 
 ## Services
 
-- **[busy-signal](docs/busy-signal.md)** (`1.0.0`): provided to let other packages report work in progress on the busy indicator.
-- **status-bar** (`^1.0.0`): consumed to place the busy indicator tile in the status bar.
+- [`busy-signal`](docs/busy-signal.md): provided to let other packages report work in progress on the busy indicator.
+- `status-bar`: consumed to place the busy indicator tile in the status bar.
 
 ## Contributing
 
