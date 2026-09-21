@@ -18,6 +18,7 @@
   "engines": {
     "lumine": "^1.0.0"
   },
+  "requiresRestartOnUpdate": true,
   "main": "./lib/index",
   "files": [
     "docs",

@@ -22,7 +22,7 @@ describe("busy-signal services", () => {
 });
 
 describe("busy-signal", () => {
-  let workspaceElement, container, mainModule, element;
+  let workspaceElement, container, mainModule, element, statusBarDisposable;
 
   beforeEach(async () => {
     workspaceElement = lumine.views.getView(lumine.workspace);
@@ -33,7 +33,7 @@ describe("busy-signal", () => {
 
     container = document.createElement("div");
     workspaceElement.appendChild(container);
-    mainModule.consumeStatusBar({
+    statusBarDisposable = mainModule.consumeStatusBar({
       addRightTile({ item }) {
         container.appendChild(item);
         return {
@@ -66,6 +66,11 @@ describe("busy-signal", () => {
 
     it("removes the status-bar tile on deactivation", async () => {
       await lumine.packages.deactivatePackage("busy-signal");
+      expect(container.contains(element)).toBe(false);
+    });
+
+    it("removes the status-bar tile when the service edge disappears", () => {
+      statusBarDisposable.dispose();
       expect(container.contains(element)).toBe(false);
     });
   });
