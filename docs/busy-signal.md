@@ -85,7 +85,7 @@ A provider you dispose does not accumulate: `dispose()` unregisters it. The cost
 
 Nothing clears a message for you, so a throw between `add` and `dispose` leaves it on screen. Use `try`/`finally`, as above.
 
-Removed messages move to a short history the indicator shows as recent activity with their elapsed time; `clear()` and `dispose()` drop them silently.
+Removing, clearing or disposing active messages moves them to the indicator's recent activity history with their elapsed time. `clear()` ends every active message of that provider; `dispose()` does the same and unregisters the provider. Previously completed history remains available.
 
 `changeTitle` is not `remove` plus `add`: it keeps the entry's position and start time, which is what a multi-stage operation wants. Note the argument order — the **new** title comes first.
 

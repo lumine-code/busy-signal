@@ -238,6 +238,9 @@ describe("busy-signal", () => {
       advanceClock(2000);
       expect(element.classList.contains("idle")).toBe(true);
       expect(element.tooltipContent.textContent).toContain("History:");
+      expect(element.tooltipContent.textContent).toContain("Task one");
+      expect(element.tooltipContent.textContent).toContain("Task two");
+      expect(element.tooltipContent.textContent).not.toContain("Current:");
     });
 
     it("removes all messages when a provider is disposed", () => {
@@ -246,6 +249,34 @@ describe("busy-signal", () => {
       provider.dispose();
       advanceClock(2000);
       expect(element.classList.contains("idle")).toBe(true);
+      expect(element.tooltipContent.textContent).toContain("History:");
+      expect(element.tooltipContent.textContent).toContain("Doomed task");
+      expect(element.tooltipContent.textContent).not.toContain("Current:");
+      expect(mainModule.instance.registry.providers.has(provider)).toBe(false);
+    });
+
+    it("preserves completed history and another provider's active work during cleanup", () => {
+      const first = registry.create(),
+        second = registry.create();
+      first.add("Completed earlier");
+      first.remove("Completed earlier");
+      first.add("Clear at cleanup");
+      second.add("Still active");
+      first.clear();
+      expect(element.tooltipContent.textContent).toContain("Completed earlier");
+      expect(element.tooltipContent.textContent).toContain("Clear at cleanup");
+      expect(element.tooltipContent.textContent).toContain("Current:");
+      expect(element.tooltipContent.textContent).toContain("Still active");
+      expect(mainModule.instance.registry.getTilesActive().map((entry) => entry.title)).toEqual([
+        "Still active",
+      ]);
+      first.add("Dispose at cleanup");
+      first.dispose();
+      expect(element.tooltipContent.textContent).toContain("Completed earlier");
+      expect(element.tooltipContent.textContent).toContain("Clear at cleanup");
+      expect(element.tooltipContent.textContent).toContain("Dispose at cleanup");
+      expect(element.tooltipContent.textContent).toContain("Still active");
+      second.dispose();
     });
   });
 });
