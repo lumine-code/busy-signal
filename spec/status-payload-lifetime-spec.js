@@ -117,4 +117,22 @@ describe("Busy signal status payload lifetime", () => {
     expect(main.instance.element.isConnected).toBe(false);
     expect(main.instance.element.tooltip).toBeNull();
   });
+
+  it("keeps the singleton on the exact latest surviving A-B-A connection", () => {
+    const first = provide(),
+      middle = provide(),
+      newest = provide(first.bar);
+    expect(tiles(first.bar).length).toBe(1);
+    expect(tiles(middle.bar).length).toBe(0);
+    expect(first.bar.element.contains(main.instance.element)).toBe(true);
+
+    newest.provider.dispose();
+    expect(tiles(first.bar).length).toBe(0);
+    expect(tiles(middle.bar).length).toBe(1);
+    expect(middle.bar.element.contains(main.instance.element)).toBe(true);
+
+    middle.provider.dispose();
+    expect(tiles(first.bar).length).toBe(1);
+    expect(first.bar.element.contains(main.instance.element)).toBe(true);
+  });
 });
