@@ -1,3 +1,4 @@
+const windowService = require("./helpers/window-service");
 describe("Busy signal status payload lifetime", () => {
   let main, hub, consumer, bars, providers, StatusBarView;
   const tiles = (bar) =>
@@ -9,7 +10,7 @@ describe("Busy signal status payload lifetime", () => {
     StatusBarView = lumine.packages.getActivePackage("status-bar").mainModule.statusBar.constructor;
     main = (await lumine.packages.activatePackage("busy-signal")).mainModule;
     hub = new lumine.packages.serviceHub.constructor();
-    consumer = hub.consume("status-bar", "^1.0.0", (bar) => main.consumeStatusBar(bar));
+    consumer = hub.consume("status-bar", "^2.0.0", (bar) => main.consumeStatusBar(bar));
     bars = [];
     providers = [];
   });
@@ -27,7 +28,7 @@ describe("Busy signal status payload lifetime", () => {
       bars.push(bar);
       jasmine.attachToDOM(bar.element);
     }
-    const provider = hub.provide("status-bar", "1.0.0", bar);
+    const provider = hub.provide("status-bar", "2.0.0", windowService(bar));
     providers.push(provider);
     return { bar, provider };
   }

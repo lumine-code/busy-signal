@@ -1,3 +1,4 @@
+const windowService = require("./helpers/window-service");
 describe("busy-signal services", () => {
   it("provides exactly one service, named after the package", () => {
     const { providedServices } = require("../package.json");
@@ -25,12 +26,14 @@ describe("busy-signal", () => {
   let workspaceElement, container, mainModule, element, statusBarDisposable;
 
   function attachStatusBar(target = container) {
-    return mainModule.consumeStatusBar({
-      addRightTile({ item }) {
-        target.appendChild(item);
-        return { destroy: () => item.remove() };
-      },
-    });
+    return mainModule.consumeStatusBar(
+      windowService({
+        addRightTile({ item }) {
+          target.appendChild(item);
+          return { destroy: () => item.remove() };
+        },
+      }),
+    );
   }
 
   beforeEach(async () => {
