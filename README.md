@@ -11,7 +11,7 @@ A base package that provides an easy-to-use API for other packages to signal the
 - **Animated dot indicator**: a colored dot in the status bar pulses orange while busy and turns green when idle.
 - **Minimum display duration**: the busy state is shown for at least 1 second to avoid flickering on fast operations.
 - **Hover tooltip**: shows the currently running tasks and a history of recently completed ones with their durations.
-- **Clickable messages**: a reported message can carry an `onDidClick` handler, so its tooltip entry acts as a button.
+- **Read-only messages**: displays task information without click actions or context menus.
 
 ## Installation
 
