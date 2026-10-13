@@ -33,7 +33,13 @@ type BusySignal = {
 };
 
 type Provider = {
-  add(title: string, options?: { onDidClick?: (event: MouseEvent) => void }): void;
+  add(
+    title: string,
+    options?: {
+      onDidClick?: (event: MouseEvent) => void;
+      actionLabel?: string;
+    },
+  ): void;
   remove(title: string): void;
   changeTitle(title: string, oldTitle: string): void;
   clear(): void;
@@ -76,6 +82,8 @@ module.exports = {
 ```
 
 ## Behavior
+
+An active message with `onDidClick` offers the same action in its tooltip and the indicator's context menu. Supply `actionLabel` to name the menu action, such as `Cancel Indexing`; otherwise the task title is used. Menu activation looks up the live task again, so a task that finishes while its menu is open cannot run a stale callback. Messages without callbacks and completed history remain informational.
 
 **Within one provider the title is the key.** Two `add` calls with the same title collapse into one entry, and `remove` needs the exact string back.
 
