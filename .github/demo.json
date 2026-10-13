@@ -1,0 +1,17 @@
+{
+  "title": "busy-signal",
+  "description": "Track a running project target through the busy indicator.",
+  "recordedOn": "2026-10-13",
+  "sourceRevision": "b0ebc4b3fdbeb9f87b5972b6528fa616a168a3d4",
+  "mode": "normal",
+  "fontSettings": "default",
+  "themeSourceRevision": "6564a9e21899b5541e9c8f8006f9be6d6d72e6ad",
+  "images": [
+    {
+      "file": "demo.png",
+      "label": "Track a running project target through the busy indicator.",
+      "width": 1100,
+      "height": 730
+    }
+  ]
+}

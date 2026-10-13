@@ -13,6 +13,8 @@ A base package that provides an easy-to-use API for other packages to signal the
 - **Hover tooltip**: shows the currently running tasks and a history of recently completed ones with their durations.
 - **Read-only messages**: displays task information without click actions or context menus.
 
+![Track a running project target through the busy indicator.](.github/demo.png)
+
 ## Installation
 
 To install `busy-signal` search for it in the Install pane of the Lumine settings, or run the command `lumine --install lumine-code/busy-signal`.
