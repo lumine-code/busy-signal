@@ -33,13 +33,7 @@ type BusySignal = {
 };
 
 type Provider = {
-  add(
-    title: string,
-    options?: {
-      onDidClick?: (event: MouseEvent) => void;
-      actionLabel?: string;
-    },
-  ): void;
+  add(title: string): void;
   remove(title: string): void;
   changeTitle(title: string, oldTitle: string): void;
   clear(): void;
@@ -50,7 +44,7 @@ type Provider = {
 | Member                         | Description                                                                 |
 | ------------------------------ | --------------------------------------------------------------------------- |
 | `create()`                     | A provider. See the cardinality rule below.                                 |
-| `add(title, options)`          | Shows a message. Within one provider the title is the identity.             |
+| `add(title)`                   | Shows a message. Within one provider the title is the identity.             |
 | `remove(title)`                | Removes it again. Must match the title exactly.                             |
 | `changeTitle(title, oldTitle)` | Renames in place, keeping its position and start time. **New title first.** |
 | `clear()`                      | Removes everything this provider added.                                     |
@@ -83,7 +77,7 @@ module.exports = {
 
 ## Behavior
 
-An active message with `onDidClick` offers the same action in its tooltip and the indicator's context menu. Supply `actionLabel` to name the menu action, such as `Cancel Indexing`; otherwise the task title is used. Menu activation looks up the live task again, so a task that finishes while its menu is open cannot run a stale callback. Messages without callbacks and completed history remain informational.
+The indicator and its tooltip are read-only. They report task state and history without click actions or a context menu. Provider metadata is never handed to the view.
 
 **Within one provider the title is the key.** Two `add` calls with the same title collapse into one entry, and `remove` needs the exact string back.
 

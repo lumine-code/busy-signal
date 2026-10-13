@@ -2,7 +2,7 @@
 
 Show a busy signal in the status bar.
 
-The tooltip lists active work and recent history. Right click the indicator to access actions offered by active tasks, such as cancelling an IDE operation. Completed tasks and tasks without actions remain informational.
+The indicator is read-only. Its tooltip lists active work and recent history.
 
 A base package that provides an easy-to-use API for other packages to signal they are performing a task.
 
