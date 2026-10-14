@@ -19,7 +19,7 @@
     "lumine": "^1.0.0"
   },
   "requiresRestartOnUpdate": true,
-  "main": "./lib/index",
+  "main": "./lib/main",
   "files": [
     "docs",
     "lib",
