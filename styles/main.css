@@ -44,3 +44,11 @@
     transform: scale(0.6);
   }
 }
+
+/* Respect reduced motion while retaining visible status indicators. */
+@media (prefers-reduced-motion: reduce) {
+  .busy-signal:is(.idle, .busy)::before {
+    animation: none;
+    transition: none;
+  }
+}
