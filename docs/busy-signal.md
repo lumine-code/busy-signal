@@ -79,6 +79,8 @@ module.exports = {
 
 The indicator and its tooltip are read-only. They report task state and history without click actions or a context menu. Provider metadata is never handed to the view.
 
+Active messages also appear as indeterminate progress on this workspace's native windows. On systems with application badges, the badge counts active messages across all workspaces. Removing the last message clears native progress; package deactivation, renderer reload and renderer crashes clear their owned reports too. Consumers keep using this service and do not manage native indicators themselves.
+
 **Within one provider the title is the key.** Two `add` calls with the same title collapse into one entry, and `remove` needs the exact string back.
 
 **Cardinality: one provider per independent unit of concurrency.** If only one message of yours is ever live, one provider for the whole package is right — `add` on start, `remove` on finish. If several can be live at once and they share a title — one "Loading" message per project root, say — give each unit its own provider and dispose it when that unit finishes. Otherwise the second `add` collapses onto the first and finishing either clears both.

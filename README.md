@@ -12,6 +12,7 @@ A base package that provides an easy-to-use API for other packages to signal the
 - **Minimum display duration**: the busy state is shown for at least 1 second to avoid flickering on fast operations.
 - **Hover tooltip**: shows the currently running tasks and a history of recently completed ones with their durations.
 - **Read-only messages**: displays task information without click actions or context menus.
+- **Native activity**: shows active work in the taskbar or Dock, with a total task badge where supported.
 
 ![Track a running project target through the busy indicator.](.github/demo.png)
 
